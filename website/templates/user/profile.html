@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block css %}
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+{% block title %}FakeCSV-Tables{% endblock %}
+{% block content %}
+    <h2>Data schemas</h2>
+    <a href="{{ url_for('base.new_schema') }}"><button type="button" class="btn btn-success left-side">New schema</button></a>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Title</th>
+          <th scope="col">Modified</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for table in tables %}
+          <tr class="block-row">
+            <th scope="row">{{ table.order }}</th>
+            <td class="schemas-name"><a href="{{ url_for('base.schema_detail', slug=table.slug) }}">{{ table.name }}</a></td>
+            <td>{{ table.created_at }}</td>
+            <td>
+              <a class="read-link" href="{{ url_for('base.profile') }}" onclick="deleteSchema(this)">Delete</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}
+
+{% block js %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/ajax_request.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/manage_row.js') }}"></script>
+{% endblock js %}

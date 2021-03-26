@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}FakeCSV-Create{% endblock %}
+{% block css %}
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+{% block content %}
+    <form action="/profile/create_schema" method="post">
+        <div class="container">
+            <h3>New schema</h3>
+            <button type="submit" class="left-side btn btn-info">Submit</button>
+
+            <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Name</label>
+                <input name="schema_name" type="text" class="form-control" id="formGroupExampleInput" minlength="3">
+            </div>
+            <div class="form-floating">
+                <label for="floatingSelect1">Column separator</label>
+                <select name="schema_select" class="form-select" id="floatingSelect1" aria-label="Default select example">
+                  <option selected>Comma(,)</option>
+                  <option value="1">Slash(/)</option>
+                  <option value="2">Semicolon(;)</option>
+                </select>
+            </div>
+            <div class="form-floating">
+                <label for="floatingSelect2">String character</label>
+                <select name="schema_character" class="form-select" id="floatingSelect2" aria-label="Default select example">
+                  <option selected>Double-quote(")</option>
+                </select>
+            </div>
+
+            <h3>Schema columns</h3>
+            <div class="count-block">
+                <input id="secret_count" type="hidden" name="column_count" value="1">
+
+                <div class="block-column">
+                    <div class="col-md-6">
+                        <label for="inputCity" class="form-label">Column name</label>
+                        <input minlength="4" name="column_name" type="text" class="form-control" id="inputCity">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="inputState" class="form-label">Type</label>
+                        <select name="column_type" id="inputState" class="form-select">
+                            <option selected>Choose...</option>
+                            <option>...</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label for="inputZip" class="form-label">Order</label>
+                        <input name="column_order" type="number" class="form-control" id="inputZip">
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-danger" onclick="deleteColumn()">Delete</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary" onclick="createColumn()">Add column</button>
+            </div>
+
+        </div>
+        <input type = "hidden" name = "csrf_token" value = "{{ csrf_token () }}">
+    </form>
+{% endblock %}
+{% block js %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/manage_row.js') }}"></script>
+{% endblock %}
