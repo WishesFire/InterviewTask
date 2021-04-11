@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from website.database.models_schema import Schema
+from flask import Blueprint, render_template, request, jsonify
+from website.database.models_schema import Schema, ColumnSchema
+from psycopg2 import Error
 from flask_login import login_required, current_user
 from website import db
 import json
@@ -20,12 +21,15 @@ def profile():
         data = json.loads(request.data)
         if data['status'] == 'delete':
             try:
-                Schema.query.filter_by(name=data['name']).delete()
+                exact_table = Schema.query.filter_by(user=current_user.id, name=data['name']).first()
+                table_id = exact_table.id
+                ColumnSchema.query.filter_by(schema_id=table_id).delete()
+                Schema.query.filter_by(user=current_user.id, name=data['name']).delete()
                 db.session.commit()
-            except:
+            except Error:
                 db.session.rollback()
 
-            return redirect(url_for('base.profile'))
+            return jsonify({"status": "delete"})
 
     tables = Schema.query.filter_by(user=current_user.id)
     content = {'user': current_user, 'name': current_user.username, 'tables': tables}

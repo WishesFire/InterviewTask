@@ -1,36 +1,47 @@
 {% extends 'base.html' %}
+{% block css %}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
 {% block title %}FakeCSV-Schema-Detail{% endblock %}
 {% block content %}
     <h2>Data sets</h2>
-    <form class="form-inline" action="{{ url_for('base.schema_detail', slug={{ slug }}) }}" method="post">
+    <form class="form-inline">
          <div class="form-group mx-sm-3 mb-2">
             <label for="numberRows" class="sr-only">Rows:</label>
             <input type="number" name="rows" max="99999" pattern="[0-9]{5}" class="form-control" id="numberRows">
          </div>
-        <button type="submit" id="create_data" class="btn btn-primary mb-2" onclick="create_new_form()">Generate data</button>
+        <button type="button" id="create_data" class="btn btn-primary mb-2" onclick="create_new_form()">Generate data</button>
     </form>
     <table class="table">
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Created</th>
-            <th scope="col">Status</th>
-            <th scope="col">Action</th>
-        </tr>
-    </thead>
-    <tbody id=main-download-block">
-        <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>
-              <a href="#" download>Download</a>
-          </td>
-        </tr>
-    </tbody>
-</table>
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Created</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody id=main-download-block">
+            {% for schema_fake in files %}
+                <tr>
+                    <td>{{ schema_fake.created_at }}</td>
+                    <td>{{ schema_fake.status }}<td>
+            {% if schema_fake.status == 'ready' %}
+                    <td>
+                        <a href="{{ schema_fake.file }}" download>Download</a>
+                    </td>
+            {% else %}
+                    <td>
+                        <p>Not work(</p>
+                    </td>
+            {% endif %}
+                </tr>
+            % endfor %}
+        </tbody>
+    </table>
 {% endblock %}
 {% block js %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">let slug = "{{ slug }}";</script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/new_file.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/ajax_request.js') }}"></script>
 {% endblock js %}

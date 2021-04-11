@@ -1,3 +1,5 @@
 $ flask db init
 $ flask db migrate
 $ flask db upgrade
+
+<form class="form-inline" action="{{ url_for('base.schema_detail', slug={{ slug }}) }}" method="post">

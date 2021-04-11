@@ -1,7 +1,9 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
-from website.handlers.services import ValidatorSchema, SaveSchema
-from website.database.models_schema import Schema
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, jsonify
+from website.tools.status_choice import FULL_LIST_CHOICE
+from website.handlers.utils import ValidatorSchema, SaveSchema
+from website.database.models_schema import Schema, FileSchema
 from flask_login import login_required, current_user
+from celery.result import AsyncResult
 from . import task_schema
 
 schema_views = Blueprint('schema', __name__)
@@ -13,26 +15,25 @@ def new_schema():
     if request.method == 'POST':
         schema_name = request.form.get('schema_name')
         schema_separator = request.form.get('schema_select')
-        schema_character = request.form.get('schema_character')
-        column_count = request.form.get('column_count')
+        column_names_list = request.form.getlist('column_name')
+        column_types_list = request.form.getlist('column_type')
+        column_orders_list = request.form.getlist('column_order')
         column_list = []
 
-        for _ in column_count:
-            elem_list = [request.form.get('column_name'),
-                         request.form.get('column_type'),
-                         request.form.get('column_order')]
-            column_list.append(elem_list)
+        column_types_list = ValidatorSchema.remark_choice(column_types_list)
 
-        valid = ValidatorSchema(schema_name, column_list)
-        schema_name = valid.name_valid()
-        if not valid.exist_duplicate(schema_name):
+        for elem in zip(column_names_list, column_types_list, column_orders_list):
+            column_list.append(list(elem))
+
+        schema_name = ValidatorSchema.name_valid(schema_name)
+        if not ValidatorSchema.exist_duplicate(schema_name, current_user.id):
             flash('Такое название уже есть!)')
-            return redirect(url_for('base.new_schema'))
+            return redirect(url_for('schema.new_schema'))
 
-        SaveSchema(schema_name, schema_separator, schema_character, column_list, current_user.id)
+        SaveSchema(schema_name, schema_separator, column_list, current_user.id)
         return redirect(url_for('base.profile'))
 
-    content = {'user': current_user, 'name': current_user.username}
+    content = {'user': current_user, 'name': current_user.username, 'types': FULL_LIST_CHOICE}
     return render_template('data_form.html', **content)
 
 
@@ -44,10 +45,33 @@ def schema_detail(slug):
         if not status:
             abort(404)
 
-    if request.method == 'POST':
-        rows_number = int(request.form.get('rows'))
-        task_schema.generate_fake_data.delay(rows_number)
+        downloads_file = FileSchema.query.filter_by(schema=status.id, user=current_user.id)
+        content = {'user': current_user, 'name': current_user.username,
+                   'slug': slug, 'files': downloads_file.order_by(FileSchema.created_at)}
+        return render_template('schema_detail.html', **content)
 
-    #TODO получити силки на файли з такою Schema
-    content = {'user': current_user, 'name': current_user.username, 'path': slug}
-    return render_template('schema_detail.html', **content)
+    if request.method == 'POST':
+        content = request.json
+        if content['status_client_task'] == 'sending':
+            rows_number = content['count']
+            user = current_user.id
+            schema = Schema.query.filter_by(user=user, slug=slug).first()
+            separator = schema.separate
+            task = task_schema.generate_fake_data.delay(rows_number, separator, user, schema.id)
+            return jsonify({"task_id": task.id, "task_status": "processing"})
+
+        elif content['status_client_task'] == 'waiting':
+            task_id = content['task_id']
+            task_result = AsyncResult(task_id).result
+            if task_result:
+                result = {
+                    "task_id": task_id,
+                    "task_status": "ready",
+                }
+            else:
+                result = {
+                    "task_id": task_id,
+                    "task_status": "processing",
+                }
+            return jsonify(result)
+

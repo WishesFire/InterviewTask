@@ -1,3 +1,4 @@
+from website.tools.status_choice import TypeChoices
 import json
 import string
 import random
@@ -23,14 +24,14 @@ class GenerateFake:
         name = ''
         for _ in range(2):
             name += "".join(random.choice(string.ascii_letters) for _ in range(random.randint(5, 15))) + ' '
-        return name[:-1]
+        return name[:-1].title()
 
     @staticmethod
     def generate_job() -> str:
-        with open('fake/json/jobs.json') as f:
+        with open('website/fake/json/jobs.json') as f:
             data = json.load(f)
-        job = random.choice(data.get('jobs'))[0]
-        return job
+        job = random.choice(data.get('occupations'))
+        return job.title()
 
     @staticmethod
     def generate_email() -> str:
@@ -46,9 +47,9 @@ class GenerateFake:
 
     @staticmethod
     def generate_company_name() -> str:
-        with open('fake/json/companies.json') as f:
+        with open('website/fake/json/companies.json') as f:
             data = json.load(f)
-        company = random.choice(data.get('companies'))[0]
+        company = random.choice(data.get('companies'))
         return company
 
     @staticmethod
@@ -57,9 +58,9 @@ class GenerateFake:
 
     @staticmethod
     def generate_address() -> str:
-        with open('fake/json/addresses.json') as f:
+        with open('website/fake/json/addresses.json') as f:
             data = json.load(f)
-        address = random.choice(data.get('addresses'))[0]
+        address = random.choice(data.get('addresses'))
         return address
 
     @staticmethod
@@ -71,13 +72,22 @@ class GenerateFake:
         random_second = random.randrange(int_delta)
         return start + datetime.timedelta(seconds=random_second)
 
-    def control_panel(self, column_id):
-        name = self.generate_name()
-        job = self.generate_job()
-        email = self.generate_email()
-        domain = self.generate_domain()
-        phone_number = self.generate_phone_number()
-        company = self.generate_company_name()
-        code = self.generate_code()
-        address = self.generate_address()
-        date = self.generate_date_registration()
+    def control_panel(self, column):
+        if column == TypeChoices.NAME:
+            return self.generate_name()
+        elif column == TypeChoices.JOB:
+            return self.generate_job()
+        elif column == TypeChoices.EMAIL:
+            return self.generate_email()
+        elif column == TypeChoices.DOMAIN:
+            return self.generate_domain()
+        elif column == TypeChoices.PHONE:
+            return self.generate_phone_number()
+        elif column == TypeChoices.COMPANY:
+            return self.generate_company_name()
+        elif column == TypeChoices.INT:
+            return self.generate_code()
+        elif column == TypeChoices.ADDRESS:
+            return self.generate_address()
+        elif column == TypeChoices.DATE:
+            return self.generate_date_registration()

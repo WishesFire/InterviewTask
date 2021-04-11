@@ -11,10 +11,10 @@ class Schema(db.Model):
     name = db.Column(db.String(200))
     slug = db.Column(db.String(200))
     separate = db.Column(db.String(200))
-    character = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.now())
     user = db.Column(db.ForeignKey('user.id'), nullable=False)
     order = db.Column(db.Integer)
+    columns = db.relationship("ColumnSchema")
 
     def __init__(self, *args, **kwargs):
         if not 'slug' in kwargs:
@@ -31,7 +31,7 @@ class ColumnSchema(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250))
     type = db.Column(db.Enum(TypeChoices))
-    schema = db.Column(db.ForeignKey('schema.id'), nullable=False)
+    schema_id = db.Column(db.Integer, db.ForeignKey('schema.id'), nullable=False)
 
     def __repr__(self):
         return f'Столбец {self.name}'

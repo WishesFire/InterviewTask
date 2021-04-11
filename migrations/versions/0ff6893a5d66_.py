@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 2ab1193d2b1c
+Revision ID: 0ff6893a5d66
 Revises: 
-Create Date: 2021-03-24 01:08:35.177941
+Create Date: 2021-03-30 23:54:28.410423
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2ab1193d2b1c'
+revision = '0ff6893a5d66'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -38,7 +38,6 @@ def upgrade():
     sa.Column('name', sa.String(length=200), nullable=True),
     sa.Column('slug', sa.String(length=200), nullable=True),
     sa.Column('separate', sa.String(length=200), nullable=True),
-    sa.Column('character', sa.String(length=200), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('user', sa.Integer(), nullable=False),
     sa.Column('order', sa.Integer(), nullable=True),
@@ -48,7 +47,7 @@ def upgrade():
     op.create_table('column',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=250), nullable=True),
-    sa.Column('type', sa.Enum('INT', 'DATE', 'EMAIL', 'PHONE', 'JOB', 'CHOICES', name='typechoices'), nullable=True),
+    sa.Column('type', sa.Enum('NAME', 'JOB', 'EMAIL', 'DOMAIN', 'PHONE', 'COMPANY', 'INT', 'ADDRESS', 'DATE', 'CHOICES', name='typechoices'), nullable=True),
     sa.Column('schema', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['schema'], ['schema.id'], ),
     sa.PrimaryKeyConstraint('id')

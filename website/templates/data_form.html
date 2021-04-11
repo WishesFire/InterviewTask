@@ -16,21 +16,14 @@
             <div class="form-floating">
                 <label for="floatingSelect1">Column separator</label>
                 <select name="schema_select" class="form-select" id="floatingSelect1" aria-label="Default select example">
-                  <option selected>Comma(,)</option>
-                  <option value="1">Slash(/)</option>
-                  <option value="2">Semicolon(;)</option>
-                </select>
-            </div>
-            <div class="form-floating">
-                <label for="floatingSelect2">String character</label>
-                <select name="schema_character" class="form-select" id="floatingSelect2" aria-label="Default select example">
-                  <option selected>Double-quote(")</option>
+                  <option selected>,</option>
+                  <option value="1">/</option>
+                  <option value="2">;</option>
                 </select>
             </div>
 
             <h3>Schema columns</h3>
             <div class="count-block">
-                <input id="secret_count" type="hidden" name="column_count" value="1">
 
                 <div class="block-column">
                     <div class="col-md-6">
@@ -41,8 +34,10 @@
                     <div class="col-md-4">
                         <label for="inputState" class="form-label">Type</label>
                         <select name="column_type" id="inputState" class="form-select">
-                            <option selected>Choose...</option>
-                            <option>...</option>
+                            <option selected>NAME</option>
+                            {% for type in types %}
+                                <option>{{ type }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
@@ -52,13 +47,13 @@
                     </div>
 
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-danger" onclick="deleteColumn()">Delete</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteColumn(this)">Delete</button>
                     </div>
                 </div>
             </div>
 
             <div class="col-12">
-                <button type="submit" class="btn btn-primary" onclick="createColumn()">Add column</button>
+                <button type="button" class="btn btn-primary" onclick="createColumn()">Add column</button>
             </div>
 
         </div>
@@ -67,5 +62,6 @@
 {% endblock %}
 {% block js %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">let js_types = "{{ types }}";</script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/manage_row.js') }}"></script>
 {% endblock %}

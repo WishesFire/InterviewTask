@@ -1,3 +1,6 @@
 .env
 .idea/
 venv/
+.website/handlers/schema/__pycache__/
+.website/tools/__pycache__/
+.website/tests/__pycache__/

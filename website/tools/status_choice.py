@@ -25,6 +25,9 @@ class TypeChoices(enum.Enum):
     )
 
 
+FULL_LIST_CHOICE = ["JOB", "EMAIL", "DOMAIN", "PHONE", "COMPANY", "INT", "ADDRESS", "DATE"]
+
+
 class StatusChoices(enum.Enum):
     READY = "ready"
     PROCESSING = "processing"

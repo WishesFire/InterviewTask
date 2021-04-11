@@ -6,7 +6,7 @@
 {% block title %}FakeCSV-Tables{% endblock %}
 {% block content %}
     <h2>Data schemas</h2>
-    <a href="{{ url_for('base.new_schema') }}"><button type="button" class="btn btn-success left-side">New schema</button></a>
+    <a href="{{ url_for('schema.new_schema') }}"><button type="button" class="btn btn-success left-side">New schema</button></a>
     <table class="table">
       <thead>
         <tr>
@@ -20,7 +20,7 @@
         {% for table in tables %}
           <tr class="block-row">
             <th scope="row">{{ table.order }}</th>
-            <td class="schemas-name"><a href="{{ url_for('base.schema_detail', slug=table.slug) }}">{{ table.name }}</a></td>
+            <td class="schemas-name"><a href="{{ url_for('schema.schema_detail', slug=table.slug) }}">{{ table.name }}</a></td>
             <td>{{ table.created_at }}</td>
             <td>
               <a class="read-link" href="{{ url_for('base.profile') }}" onclick="deleteSchema(this)">Delete</a>
