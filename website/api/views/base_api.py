@@ -1,5 +1,6 @@
 from flask_restful import Resource, fields, marshal_with
-from flask_login import current_user, login_required
+from flask_jwt_extended import jwt_required
+from flask_login import current_user
 from website.database.models_schema import Schema
 
 resource_fields = {
@@ -8,23 +9,16 @@ resource_fields = {
     "separate": fields.String,
     "user": fields.Integer,
     "order": fields.Integer
-
 }
-
-
-class MainPage(Resource):
-    def get(self):
-        return {'user': current_user}
 
 
 class Profile(Resource):
     @marshal_with(resource_fields)
-    @login_required
+    @jwt_required
     def get(self):
         tables = Schema.query.filter_by(user=current_user.id)
-        return tables, {'user': current_user, 'name': current_user.username}
+        return tables
 
-    @login_required
     def delete(self):
         pass
 

@@ -62,8 +62,10 @@ def schema_detail(slug):
 
         elif content['status_client_task'] == 'waiting':
             task_id = content['task_id']
-            task_result = AsyncResult(task_id).result
-            if task_result:
+            task_result = task_schema.generate_fake_data.AsyncResult(task_id)
+            print(task_result.status)
+            print(task_result.result)
+            if task_result.result and task_result.status != "FAILURE":
                 result = {
                     "task_id": task_id,
                     "task_status": "ready",

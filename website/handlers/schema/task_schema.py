@@ -1,11 +1,8 @@
 from celery import Celery
-from website.tools.status_choice import StatusChoices
 from website.tools.generate_fake import GenerateFake
 from website.database.models_schema import FileSchema, Schema
 from website import db
 from io import StringIO
-from io import BytesIO
-from flask import send_file
 import csv
 from dotenv import load_dotenv
 import os
@@ -21,7 +18,6 @@ celery.conf.result_backend = os.getenv('CELERY_RESULT_BACKEND')
 @celery.task(name="create_generator_fake_task")
 def generate_fake_data(rows_count, separator, user, schema_id):
     try:
-        print("Creating task")
         all_columns = Schema.query.filter_by(id=schema_id, user=user).first()
         all_columns_prepare = [column_type for column_type in all_columns.columns]
         buffer_memory = StringIO()
@@ -35,17 +31,11 @@ def generate_fake_data(rows_count, separator, user, schema_id):
             for column_type in schema_column_types:
                 writer.writerow(GenerateFake().control_panel(column_type))
 
-        #mem = BytesIO()
-        #mem.write(buffer_memory.getvalue().encode('utf-8'))
-        #mem.seek(0)
-        #buffer_memory.close()
-        #finally_file = send_file(buffer_memory, as_attachment=True, attachment_filename=f'schema-{schema_id}.csv',
-                                 #mimetype='text/csv')
         finally_file = buffer_memory.getvalue().encode('utf-8')
-        status = StatusChoices.READY
+        status = "READY"
     except Exception as exc:
         print(exc)
-        status = StatusChoices.FAILED
+        status = "FAILED"
         save_file(status, schema_id, user)
         return False
     else:

@@ -13,7 +13,7 @@
         <button type="button" id="create_data" class="btn btn-primary mb-2" onclick="create_new_form()">Generate data</button>
     </form>
     <table class="table">
-        <thead class="thead-dark">
+        <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Created</th>
@@ -21,25 +21,27 @@
                 <th scope="col">Action</th>
             </tr>
         </thead>
-        <tbody id=main-download-block">
-            {% for schema_fake in files %}
+        <tbody>
+            {% for schema_fake_file in files %}
                 <tr>
-                    <td>{{ schema_fake.created_at }}</td>
-                    <td>{{ schema_fake.status }}<td>
-            {% if schema_fake.status == 'ready' %}
-                    <td>
-                        <a href="{{ schema_fake.file }}" download>Download</a>
-                    </td>
-            {% else %}
-                    <td>
-                        <p>Not work(</p>
-                    </td>
-            {% endif %}
+                    <td>1</td>
+                    <td>{{ schema_fake_file.created_at }}</td>
+                    <td>{{ schema_fake_file.status }}<td>
+                    {% if schema_fake_file.status == 'READY' %}
+                            <td>
+                                <a href="{{ schema_fake_file.file }}" download>Download</a>
+                            </td>
+                    {% else %}
+                            <td>
+                                <p>Not work(</p>
+                            </td>
+                    {% endif %}
                 </tr>
-            % endfor %}
+            {% endfor %}
         </tbody>
     </table>
-{% endblock %}
+{% endblock content %}
+
 {% block js %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript">let slug = "{{ slug }}";</script>

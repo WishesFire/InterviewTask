@@ -43,7 +43,8 @@ function get_status(task_id, path, csrf_token) {
         data: JSON.stringify({'status_client_task': 'waiting', 'task_id': task_id}),
         success: function (response) {
             if (response['task_status'] === 'ready') {
-                location.reload();
+                console.log("YEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+                window.location.reload();
             }
             else {
                 setTimeout(function (){
@@ -52,6 +53,7 @@ function get_status(task_id, path, csrf_token) {
             }
         },
         error: function (exception) {
+            console.log(exception)
             alert('Something wrong');
             location.reload();
         }
@@ -63,17 +65,17 @@ function create_html() {
         <tr>
           <th scope="row">{number}</th>
           <td>{time}</td>
-          <td>Processing</td>
+          <td>PROCESSING</td>
           <td>
               <a href="#" download>Download</a>
           </td>
         </tr>`;
-    let block_count = $('#main-download-block tr').length
+    let block_count = $('table tbody tr').length
     let full_date = get_date();
     let full_block = block_temp
         .replace('{number}', block_count)
         .replace('{time}', full_date)
-    $('#main-download-block').append(full_block);
+    $('table tbody').append(full_block);
 }
 
 function get_date() {

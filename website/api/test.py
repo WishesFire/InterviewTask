@@ -9,8 +9,3 @@ class TestMainPage:
         response = requests.get(MAIN_URL)
         print(response.json())
         assert response.status_code == 200
-
-
-class TestProfile:
-    def __init__(self):
-        pass

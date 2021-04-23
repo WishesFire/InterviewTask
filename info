@@ -2,4 +2,11 @@ $ flask db init
 $ flask db migrate
 $ flask db upgrade
 
-<form class="form-inline" action="{{ url_for('base.schema_detail', slug={{ slug }}) }}" method="post">
+celery worker --app=website.handlers.schema.task_schema.celery --loglevel=info --pool=solo
+celery worker --app=website.handlers.schema.task_schema.celery --loglevel=info -P thread
+
+flower --app=website.handlers.schema.task_schema.celery --port=5555
+
+pip install celery==3.1.25
+
+celery -A tasks worker --loglevel=info -E
