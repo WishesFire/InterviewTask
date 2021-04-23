@@ -21,10 +21,10 @@ def profile():
         data = json.loads(request.data)
         if data['status'] == 'delete':
             try:
-                exact_table = Schema.query.filter_by(user=current_user.id, name=data['name']).first()
+                exact_table = Schema.query.filter_by(user=current_user.id, name=data['name']).first_or_404()
                 table_id = exact_table.id
                 ColumnSchema.query.filter_by(schema_id=table_id).delete()
-                Schema.query.filter_by(user=current_user.id, name=data['name']).delete()
+                db.session.delete(exact_table)
                 db.session.commit()
             except Error:
                 db.session.rollback()

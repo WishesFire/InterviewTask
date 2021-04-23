@@ -34,7 +34,7 @@ class UserRegistrationPage(Resource):
                 "message": f"User {username} was successfully created",
                 "access_token": true_token,
                 "refresh_token": refresh_token,
-            })
+            }), 200
 
         except:
             return jsonify({"message": "Something wrong!"}), 500
@@ -55,7 +55,7 @@ class UserLoginPage(Resource):
                 "message": f"User {username} is logged",
                 "access_token": true_token,
                 "refresh_token": refresh_token
-            })
+            }), 200
         else:
             return jsonify({"message": "Something wrong!"}), 500
 
@@ -68,7 +68,7 @@ class UserLogoutToken(Resource):
             token = Token(jti=jti_token)
             db.session.add(token)
             db.session.commit()
-            return jsonify({'message': 'Access token has been revoked'})
+            return jsonify({'message': 'Access token has been revoked'}), 200
         except:
             return jsonify({"message": "Something wrong"}), 500
 
@@ -79,6 +79,6 @@ class RefreshToken(Resource):
         try:
             now_user = get_jwt_identity()
             create_access_token(identity=now_user)
-            return jsonify({"message": "Token refresh successfully"})
+            return jsonify({"message": "Token refresh successfully"}), 200
         except:
-            return jsonify({"message": "Something wrong!"})
+            return jsonify({"message": "Something wrong!"}), 500
